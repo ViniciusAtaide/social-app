@@ -9,7 +9,7 @@ const App = () => (
 			<Navbar />
 			<Switch>
 				<Route exact path="/" component={Timeline} />
-				<Route exact path="/subscribe" component={Subscribe} />
+				<Route path="/subscribe" component={Subscribe} />
 			</Switch>
 		</React.Fragment>
 	</Router>
