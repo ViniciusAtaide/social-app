@@ -1,7 +1,7 @@
 const initialState = {
-  loggedIn: false,
   user: null,
-  authError: null
+  loginError: null,
+  signinError: null
 };
 
 export default function(state = initialState, action) {
@@ -9,17 +9,17 @@ export default function(state = initialState, action) {
     case "LOGIN":
       return {
         ...state,
-        loggedIn: true,
         user: action.user
       };
     case "LOGOUT":
       return {
         ...state,
-        loggedIn: false,
         user: null
       };
-    case "AUTH_ERROR":
-      return { ...state, authError: action.payload };
+    case "SIGNIN_ERROR":
+      return { ...state, signinError: action.payload };
+    case "LOGIN_ERROR":
+      return { ...state, loginError: action.payload };
     default:
       return state;
   }

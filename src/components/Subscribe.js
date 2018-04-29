@@ -1,35 +1,12 @@
 import React from "react";
+import validator from "email-validator";
+import { signin } from "../actions";
 import { Form, Field } from "react-final-form";
 import TextField from "material-ui/TextField";
 import Paper from "material-ui/Paper";
 import Grid from "material-ui/Grid";
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
-import { connect } from "react-redux";
-import { withStyles } from "material-ui/styles";
-import { login } from "../actions";
-import validator from "email-validator";
-
-const styles = theme => ({
-  paperForm: {
-    flex: 0.33,
-    marginTop: theme.spacing.unit * 5,
-    padding: theme.spacing.unit * 3
-  },
-  header: {
-    height: theme.spacing.unit * 5
-  },
-  input: {
-    height: theme.spacing.unit * 7
-  },
-  bottom: {
-    marginTop: 20
-  }
-});
-
-const onSubmit = (dispatch, values) => {
-  dispatch(login(values));
-};
 
 const validate = values => {
   let errors = {};
@@ -40,14 +17,14 @@ const validate = values => {
     errors.password = "Senhas não estão iguais.";
   }
   if (!validator.validate(values.email)) {
-    errors.email = "Não é um email válido";
+    errors.email = "Email inválido.";
   }
   return errors;
 };
 
-const Subscribe = ({ classes, dispatch }) => (
+const Subscribe = ({ classes, dispatch, signinError, toggleSubscribe }) => (
   <Form
-    onSubmit={onSubmit.bind(this, dispatch)}
+    onSubmit={values => dispatch(signin(values))}
     validate={validate}
     render={({ handleSubmit, form, submitting, pristine }) => (
       <form onSubmit={handleSubmit}>
@@ -59,30 +36,26 @@ const Subscribe = ({ classes, dispatch }) => (
             <Grid item className={classes.input}>
               <Field name="name">
                 {({ input, meta }) => (
-                  <div>
-                    <TextField
-                      helperText={meta.touched && meta.error}
-                      error={meta.touched && meta.error ? true : false}
-                      placeholder="Nome"
-                      fullWidth={true}
-                      {...input}
-                    />
-                  </div>
+                  <TextField
+                    helperText={meta.touched && meta.error}
+                    error={meta.touched && meta.error ? true : false}
+                    placeholder="Nome"
+                    fullWidth={true}
+                    {...input}
+                  />
                 )}
               </Field>
             </Grid>
             <Grid item className={classes.input}>
               <Field name="email">
                 {({ input, meta }) => (
-                  <div>
-                    <TextField
-                      helperText={meta.touched && meta.error}
-                      error={meta.touched && meta.error ? true : false}
-                      placeholder="Email"
-                      fullWidth={true}
-                      {...input}
-                    />
-                  </div>
+                  <TextField
+                    helperText={meta.touched && meta.error}
+                    error={meta.touched && meta.error ? true : false}
+                    placeholder="Email"
+                    fullWidth={true}
+                    {...input}
+                  />
                 )}
               </Field>
             </Grid>
@@ -130,7 +103,19 @@ const Subscribe = ({ classes, dispatch }) => (
               </Field>
             </Grid>
 
+            {signinError ? (
+              <p style={{ color: "red" }}> {signinError} </p>
+            ) : null}
+
             <Grid item container justify="flex-end">
+              <Button
+                color="primary"
+                className={classes.bottom}
+                onClick={toggleSubscribe}
+              >
+                Login
+              </Button>
+
               <Button
                 className={classes.bottom}
                 onClick={form.reset}
@@ -155,4 +140,4 @@ const Subscribe = ({ classes, dispatch }) => (
   />
 );
 
-export default connect()(withStyles(styles)(Subscribe));
+export default Subscribe;

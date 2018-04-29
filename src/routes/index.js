@@ -1,4 +1,4 @@
-import Subscribe from "./Subscribe";
+import Auth from "./Auth";
 import Timeline from "./Timeline";
 
-export { Timeline, Subscribe };
+export { Timeline, Auth };
