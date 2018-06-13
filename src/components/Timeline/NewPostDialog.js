@@ -1,16 +1,15 @@
 import React from "react";
-import Button from "material-ui/Button";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "material-ui/Dialog";
-import { togglePostDialog } from "../actions/timeline";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import { Form, Field } from "react-final-form";
-import { createPost } from "../actions/timeline";
-import { withStyles } from "material-ui/styles";
-import Grid from "material-ui/Grid";
-import { TextField } from "material-ui";
+import { withStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import { api } from "../../index";
+import { connect } from "react-redux";
 
 const styles = theme => ({
   input: {
@@ -18,10 +17,28 @@ const styles = theme => ({
   }
 });
 
-const NewPostDialog = ({ open, dispatch, classes, token }) => (
+const createPost = (post, token) => dispatch => {
+  api
+    .post("posts", post, { headers: { authorization: token } })
+    .then(response => {
+      dispatch({ type: "TOGGLE_POST_DIALOG" });
+      dispatch({ type: "POST_CREATED", post: response.data });
+    })
+    .catch(err => {
+      dispatch({ type: "TOGGLE_POST_DIALOG" });
+    });
+};
+
+const NewPostDialog = ({
+  open,
+  dispatch,
+  classes,
+  togglePostDialog,
+  token
+}) => (
   <Dialog
     open={open}
-    onClose={() => dispatch(togglePostDialog())}
+    onClose={togglePostDialog}
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >
@@ -49,10 +66,7 @@ const NewPostDialog = ({ open, dispatch, classes, token }) => (
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button
-              onClick={() => dispatch(togglePostDialog())}
-              color="secondary"
-            >
+            <Button onClick={togglePostDialog} color="secondary">
               Cancelar
             </Button>
             <Button
@@ -70,4 +84,6 @@ const NewPostDialog = ({ open, dispatch, classes, token }) => (
   </Dialog>
 );
 
-export default withStyles(styles)(NewPostDialog);
+export default connect(store => ({ token: store.context.user.auth_token }))(
+  withStyles(styles)(NewPostDialog)
+);

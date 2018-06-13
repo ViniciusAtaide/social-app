@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, AppBar, Toolbar, Typography } from "material-ui";
-import { withStyles } from "material-ui/styles";
+import { Button, AppBar, Toolbar, Typography } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { logout } from "../actions";
+
+export const logout = () => ({ type: "LOGOUT" });
 
 const styles = theme => ({
   bar: { flexGrow: 1 },
@@ -36,7 +37,7 @@ const Navbar = ({ auth, dispatch, classes }) => (
 );
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.context
 });
 
 export default withStyles(styles)(connect(mapStateToProps)(Navbar));

@@ -1,5 +1,5 @@
 import React from "react";
-import { withStyles } from "material-ui/styles";
+import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { Login, Subscribe } from "../components";
 
@@ -20,25 +20,38 @@ const styles = theme => ({
   }
 });
 
-class WrapperLoginSubscribe extends React.Component {
-  state = {
-    subscribeToggle: false
-  };
+const toggleSubscribe = () => ({ type: "TOGGLE_SUBSCRIBE" });
 
-  toggleSubscribe = () => {
-    this.setState({ subscribeToggle: !this.state.subscribeToggle });
-  };
+const initialState = {
+  subscribeToggle: false
+};
 
-  render() {
-    return this.state.subscribeToggle ? (
-      <Subscribe {...this.props} toggleSubscribe={this.toggleSubscribe} />
-    ) : (
-      <Login {...this.props} toggleSubscribe={this.toggleSubscribe} />
-    );
+export const auth = (state = initialState, action) => {
+  switch (action.type) {
+    case "TOGGLE_SUBSCRIBE":
+      return { ...state, subscribeToggle: !state.subscribeToggle };
+    default:
+      return state;
   }
-}
+};
 
-export default connect(state => ({
-  signinError: state.auth.signinError,
-  loginError: state.auth.loginError
-}))(withStyles(styles)(WrapperLoginSubscribe));
+const WrapperLoginSubscribe = props =>
+  props.subscribeToggle ? (
+    <Subscribe
+      {...props}
+      toggleSubscribe={() => props.dispatch(toggleSubscribe())}
+    />
+  ) : (
+    <Login
+      {...props}
+      toggleSubscribe={() => props.dispatch(toggleSubscribe())}
+    />
+  );
+
+export default connect(state => {
+  return {
+    signinError: state.context.signinError,
+    loginError: state.context.loginError,
+    subscribeToggle: state.auth.subscribeToggle
+  };
+})(withStyles(styles)(WrapperLoginSubscribe));

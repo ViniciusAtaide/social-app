@@ -8,12 +8,23 @@ import registerServiceWorker from "./registerServiceWorker";
 import { Provider } from "react-redux";
 import createHistory from "history/createBrowserHistory";
 import { createStore, applyMiddleware } from "redux";
-import rootReducer from "./reducers";
 import thunk from "redux-thunk";
 import axios from "axios";
 import { loadState, saveState } from "./localStorage";
 import { ConnectedRouter, routerMiddleware } from "react-router-redux";
 import throttle from "lodash/throttle";
+import { combineReducers } from "redux";
+import { context } from "./App";
+import { timeline } from "./routes/Timeline";
+import { auth } from "./routes/Auth";
+import { routerReducer } from "react-router-redux";
+
+const rootReducer = combineReducers({
+  context,
+  timeline,
+  auth,
+  routing: routerReducer
+});
 
 export const api = axios.create({
   baseURL: "http://localhost:3000/api/v1/",
